@@ -1,3 +1,6 @@
+//Written By Ben Wood
+//all methods to connect to the api
+
 package com.example.projectworkshop8.api
 
 import com.example.projectworkshop8.models.Product

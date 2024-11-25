@@ -1,3 +1,6 @@
+//written by Ben Wood
+//This activity pulls up the forms and and data from the database on the android emulator
+
 package com.example.projectworkshop8
 
 import android.os.Bundle
@@ -24,6 +27,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+//Opens the app directly when the emulator starts
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +39,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
+//refreshes the data whenever something gets manipulated
 @Composable
 fun MainScreen() {
     var refreshTrigger by remember { mutableStateOf(0) }
@@ -60,12 +64,15 @@ fun MainScreen() {
     }
 }
 
+//function for the product list
 @Composable
 fun ProductList(
     refreshTrigger: Int,
     modifier: Modifier = Modifier
 ) {
+    //product variable
     var products by remember { mutableStateOf<List<Product>>(emptyList()) }
+    //loading variable
     var isLoading by remember { mutableStateOf(true) }
 
     // Fetch products whenever refreshTrigger changes
@@ -82,6 +89,8 @@ fun ProductList(
                 isLoading = false
             }
 
+
+            //on error produce an error log with a description of what happened
             override fun onFailure(call: Call<List<Product>>, t: Throwable) {
                 Log.e("ProductList", "API call failed: ${t.message}")
                 isLoading = false
@@ -89,8 +98,10 @@ fun ProductList(
         })
     }
 
+    //if loading increase the size of the circle
     if (isLoading) {
         CircularProgressIndicator(modifier = modifier.fillMaxSize())
+        //otherwise show the product list
     } else {
         LazyColumn(modifier = modifier) {
             items(products) { product ->
@@ -104,12 +115,16 @@ fun ProductList(
     }
 }
 
+//function for the product form
 @Composable
 fun AddProductForm(onProductAdded: () -> Unit) {
+    //product name
     var productName by remember { mutableStateOf("") }
+    //loading variable
     var isLoading by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.padding(16.dp)) {
+        //text field for the product form
         TextField(
             value = productName,
             onValueChange = { productName = it },
@@ -119,6 +134,7 @@ fun AddProductForm(onProductAdded: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        //submit button
         Button(
             onClick = {
                 isLoading = true
@@ -148,12 +164,14 @@ fun AddProductForm(onProductAdded: () -> Unit) {
     }
 }
 
+//update form
 @Composable
 fun UpdateProductForm(onProductUpdated: () -> Unit) {
     var productId by remember { mutableStateOf("") }
     var productName by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
+    //text field for product id
     Column(modifier = Modifier.padding(16.dp)) {
         TextField(
             value = productId,
@@ -164,6 +182,7 @@ fun UpdateProductForm(onProductUpdated: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        //text field for the name that you would want to change the product to
         TextField(
             value = productName,
             onValueChange = { productName = it },
@@ -173,6 +192,7 @@ fun UpdateProductForm(onProductUpdated: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        //submit button
         Button(
             onClick = {
                 isLoading = true
@@ -203,11 +223,13 @@ fun UpdateProductForm(onProductUpdated: () -> Unit) {
     }
 }
 
+//delete form
 @Composable
 fun DeleteProductForm(onProductDeleted: () -> Unit) {
     var productId by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
 
+    //text field for product id
     Column(modifier = Modifier.padding(16.dp)) {
         TextField(
             value = productId,
@@ -218,6 +240,7 @@ fun DeleteProductForm(onProductDeleted: () -> Unit) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        //submit button
         Button(
             onClick = {
                 isLoading = true
